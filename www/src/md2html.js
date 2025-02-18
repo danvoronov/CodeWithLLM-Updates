@@ -1,23 +1,33 @@
 const marked = require('marked');
 const { ALLOWED_EXTENSIONS } = require('../config');
-marked.use({ breaks: true, gfm: true });
 
 marked.use({
+  breaks: true, 
+  gfm: true,
   renderer: {
     link(token) {
-      const url = (token.href?.trim() || '');
+      const url = token.href?.trim() || '';
       const ext = url.split('.').pop()?.toLowerCase();
       
       if (ALLOWED_EXTENSIONS.audio.includes(`.${ext}`)) {
-        return `
-          <audio controls>
-            <source src="/audio/${url}" type="audio/${ext}">
-            ${token.text} (аудио не поддерживается вашим браузером)
-          </audio>
-        `;
+        return `<audio controls>
+          <source src="/audio/${url}" type="audio/${ext}">
+          ${token.text} (аудио не поддерживается вашим браузером)
+        </audio>`;
       }
-      
-      return `<a target="_blank" href="${url}"${token.title ? ` title="${token.title}"` : ''}>${token.text}</a>`;
+
+      // Проверяем, является ли текст ссылки изображением 🖼️
+      const isImage = token.text.startsWith('![') && token.text.endsWith(')');
+      if (isImage) {
+        // Извлекаем параметры изображения
+        const match = token.text.match(/!\[(.*?)\]\((.*?)(?:\s+"(.*?)")?\)/);
+        if (match) {
+          const [_, imgText, imgUrl, imgTitle] = match;
+          // Создаем HTML для изображения внутри ссылки 🔗
+          return `<a href="${token.href}"${token.title ? ` title="${token.title}"` : ''}><img src="${imgUrl}" alt="${imgText}"${imgTitle ? ` title="${imgTitle}"` : ''}/></a>`;
+        }
+      }
+      return `<a href="${token.href}"${token.title ? ` title="${token.title}"` : ''}>${token.text}</a>`;
     },
     
     image(href, title, text) {

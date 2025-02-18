@@ -1,6 +1,8 @@
 
 ## Integrated Development Environments
 
+ These IDEs offer a superior coding experience compared to traditional IDEs.
+
 | Tool                                                               | Description                                                                                                                                                                                                                   |
 | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | ⚡ [Cursor](https://www.cursor.sh/)                                 | A next-generation IDE designed for pair-programming with AI. Edit, debug, and understand complex codebases with powerful AI assistance.                                                                                       |
@@ -9,17 +11,17 @@
 | ⚡ [Windsurf](https://codeium.com/windsurf)                         | Windsurf, by Codeium, is an AI-powered code completion tool. It is designed to suggest entire functions and blocks of code based on context.                                                                                  |
 | [aide](https://aide.dev/)                                          | Aide is an AI coding assistant designed to make the process of coding faster and more efficient, by offering intelligent code suggestions and completions.                                                                    |
 | [PearAI](https://trypear.ai/)                                      | Bring your ideas to life with the best AI tools integrated into a single code editor. Built to supercharge your project development all the way from inception to running at scale. Always open source.                       |
-| [trae](https://www.trae.ai/home)                                   | trae is an AI-powered platform that appears to create applications from prompts, enabling fast full-stack application development.                                                                                            |
+| [trae](https://www.trae.ai/home)                                   | trae uses AI to enable developers to quickly build full-stack applications from prompts.                                                                                                                                      |
 | [MarsCode](https://www.marscode.com/home)                          | Built-in AI programming assistant with capabilities like code completion, explanation, and debugging for faster development.                                                                                                  |
 | [CodeLLM](https://codellm.abacus.ai/)                              | A revolutionary new AI Code Editor that helps you 10x your developer productivity! Bundled with AI super assistant ChatLLM.                                                                                                   |
 
-### other
+## AI-Enhanced Development Tools
 
 | &nbsp;                                 | Tool                                                                                 | Description                                                                                                                                                                              |
 | -------------------------------------- | ------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Command Line Interface (CLI) Tools** | [aider chat](https://aider.chat/)                                                    | A CLI tool that allows you to interact with an AI coding assistant directly from your terminal. It helps with code generation, modification, and understanding through a chat interface. |
 |                                        | [plandex](https://plandex.ai/)                                                       | An open source, terminal-based AI coding engine. Designed for real-world tasks that span many files.                                                                                     |
-| **Extensions**                         | [Cline](https://github.com/cline/cline)                                              | An extension that appears to be designed to integrate AI assistance into VS Code.                                                                                                        |
+| **Extensions**                         | [Cline](https://github.com/cline/cline)                                              | A VS Code extension that integrates AI-powered agentic coding assistance.                                                                                                                |
 |                                        | [RooCode](https://github.com/RooVetGit/Roo-Code)                                     | An extension (fork of Cline) created by a Roo that adds AI-powered code generation capabilities to VS Code.                                                                              |
 |                                        | [Continue.dev](https://www.continue.dev/)                                            | An open-source AI coding assistant for IDEs that helps accelerate software development. It offers features like code generation, refactoring, and debugging assistance.                  |
 |                                        | [qodo](https://www.qodo.ai/)                                                         | Agentic AI for testing, reviewing, and writing code—continuous quality at every step.                                                                                                    |
@@ -33,9 +35,12 @@
 |                                        | [Replit](https://replit.com/)                                                        | A collaborative, browser-based IDE that supports many programming languages. It now has AI features that helps write the code.                                                           |
 | **AI Developer Platforms**             | [devin](https://app.devin.ai/)                                                       | Devin is presented as an AI software engineer, capable of handling complex development tasks and working autonomously.                                                                   |
 |                                        | [OpenHands](https://www.all-hands.dev/)                                              | A platform that helps streamline the development process by offering AI assistance at different phases in building software.                                                             |
+|                                        | [databutton](https://databutton.com/)                                                | Databutton lets you build software collaboratively with an AI developer. It handles everything from planning and coding to deployment, without requiring coding expertise.               |
 
 ---
 
 Instead of paying for individual **API keys** for every AI service, there are cost-effective and flexible alternatives. One option is to use [OpenRouter](https://openrouter.ai/), which acts as a unified API for various models. This can potentially consolidate costs and simplify integration.
 
-If you have powerful hardware and prioritize privacy or want more control, you can run large language models (LLMs) locally. Tools like [Ollama](https://ollama.com/) and [LM Studio](https://lmstudio.ai/) make it easier to deploy and manage these models on your own machine. For code autocompletion specifically, consider local-first solutions like [TabbyML](https://www.tabbyml.com/).
+You can also find a comprehensive list of AI coding tools in the following awesome-type repository: [awesome-code-ai](https://github.com/sourcegraph/awesome-code-ai).
+
+If you have powerful hardware and prioritize privacy or want more control, you can run large language models (LLMs) locally. Tools like [Ollama](https://ollama.com/) and [LM Studio](https://lmstudio.ai/) make it easier to deploy and manage these models on your own machine. For code autocompletion specifically, consider solutions with local-first option like [TabbyML](https://www.tabbyml.com/).
