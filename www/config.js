@@ -50,6 +50,7 @@ const postsConfig = {
 
 const siteConfig = {
     title: 'CodeWithLLM',
+    analytics: '<script defer src="https://cloud.umami.is/script.js" data-website-id="83382b3e-2896-4870-8d1c-c7f51e97497f"></script>',
     descriptions: {
         index: 'Updates and tips about using Large Language Models (LLM) for programming and development',
         ukr: 'Поради та оновлення щодо використання великих мовних моделей (LLM) для програмування',

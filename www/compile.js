@@ -736,6 +736,7 @@ function createPage(title, content, activeMenu, posts = [], currentMonth = '', p
     <!-- Подключаем lite-yt-embed -->
     <link rel="stylesheet" href="/css/lite-yt-embed.css" />
     <script src="/js/lite-yt-embed.js"></script>
+    ${siteConfig.analytics}
   </head>
   <body>
     <div class="wrapper">
