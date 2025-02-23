@@ -750,9 +750,9 @@ function createPage(title, content, activeMenu, posts = [], currentMonth = '', p
 
 function createSimpleContent(content) {
   return `
-    <div class="container" style="grid-template-columns: 1fr">
-      <div class="post-wrapper">
-        <div class="post">
+    <div class="static-container">
+      <div class="static-content-wrapper">
+        <div class="static-content">
           ${content}
         </div>
       </div>
