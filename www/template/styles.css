@@ -214,6 +214,8 @@ body {
   .post th:last-child,
   .post td:last-child {
     border-right: none;
+    white-space: nowrap;
+    width: 1%;
   }
 
   .post tr:last-child td {

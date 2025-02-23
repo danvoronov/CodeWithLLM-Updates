@@ -24,10 +24,10 @@ marked.use({
         if (match) {
           const [_, imgText, imgUrl, imgTitle] = match;
           // Создаем HTML для изображения внутри ссылки 🔗
-          return `<a href="${token.href}"${token.title ? ` title="${token.title}"` : ''}><img src="${imgUrl}" alt="${imgText}"${imgTitle ? ` title="${imgTitle}"` : ''}/></a>`;
+          return `<a target="_blank" href="${token.href}"${token.title ? ` title="${token.title}"` : ''}><img src="${imgUrl}" alt="${imgText}"${imgTitle ? ` title="${imgTitle}"` : ''}/></a>`;
         }
       }
-      return `<a href="${token.href}"${token.title ? ` title="${token.title}"` : ''}>${token.text}</a>`;
+      return `<a target="_blank" href="${token.href}"${token.title ? ` title="${token.title}"` : ''}>${token.text}</a>`;
     },
     
     image(href, title, text) {
@@ -54,7 +54,7 @@ marked.use({
 
 function mdToHtml(content) {
   // Заменяем теги на красивые спаны перед обработкой markdown
-  content = content.replace(/#([a-zA-Zа-яА-ЯёЁіІїЇєЄ]+)/g, '<span class="post-tag">#$1</span>');
+  content = content.replace(/(?<=\s)#([a-zA-Zа-яА-ЯёЁіІїЇєЄ]+)/g, '<span class="post-tag">#$1</span>');
   
   return marked.parse(content.replace(/<!--[\s\S]*?-->/g, ''));
 }
