@@ -906,3 +906,26 @@ body {
       margin: 8px 0;
     }
   }
+
+  .rss-link {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 6px;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+  }
+
+  .rss-link:hover {
+    opacity: 1;
+    background-color: transparent !important;
+  }
+
+  .menu a.rss-link {
+    padding: 0;
+    margin-top: 1px;
+    position: relative;
+    top: 0;
+    display: inline-flex;
+    float: right;
+    background-color: transparent !important;
+  }

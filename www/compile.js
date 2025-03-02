@@ -638,10 +638,22 @@ function generateMenu(activeMenu, posts = [], currentMonth = '') {
         ${menuItems.map(item => {
           const isActive = activeMenu === item.id;
           const itemHtml = `
-            <a href="${item.path}" 
-               class="${isActive ? 'active' : ''}">
-              ${item.text}
-            </a>
+            <span style="display: flex; align-items: center;">
+              <a href="${item.path}" 
+                 class="${isActive ? 'active' : ''}">
+                ${item.text}
+              </a>
+              ${(item.id === 'index' || item.id === 'ukr') ? `<a href="/${item.id === 'ukr' ? 'ua/' : ''}feed.xml" 
+                   class="rss-link" 
+                   title="RSS Feed"
+                   target="_blank">
+                  <svg viewBox="0 0 8 8" width="12" height="12">
+                    <circle cx="2" cy="6" r="1" fill="currentColor"/>
+                    <path d="m 1,4 a 3,3 0 0 1 3,3 h 1 a 4,4 0 0 0 -4,-4 z" fill="currentColor"/>
+                    <path d="m 1,2 a 5,5 0 0 1 5,5 h 1 a 6,6 0 0 0 -6,-6 z" fill="currentColor"/>
+                  </svg>
+                </a>` : ''}
+            </span>
           `;
 
           if (isActive && item.showArchive && posts.length > 0) {
@@ -759,6 +771,36 @@ function createSimpleContent(content) {
     </div>`;
 }
 
+function prepareContentForRss(content, language) {
+  // Заменяем относительные URL на абсолютные
+  let processedContent = content;
+  
+  // Обрабатываем изображения
+  processedContent = processedContent.replace(/src="\/img\//g, `src="${siteUrl}img/`);
+  processedContent = processedContent.replace(/src="img\//g, `src="${siteUrl}img/`);
+  processedContent = processedContent.replace(/src="\/audio\//g, `src="${siteUrl}audio/`);
+  processedContent = processedContent.replace(/src="audio\//g, `src="${siteUrl}audio/`);
+  
+  // Обрабатываем ссылки, но не трогаем абсолютные URL
+  processedContent = processedContent.replace(/href="\/(?!(http|https):\/\/)/g, `href="${siteUrl}`);
+  
+  // Заменяем lite-youtube на обычные ссылки на YouTube
+  const liteYoutubeRegex = /<lite-youtube[^>]*videoid="([^"]+)"[^>]*>.*?<\/lite-youtube>/g;
+  processedContent = processedContent.replace(liteYoutubeRegex, (match, videoId) => {
+    const text = language === 'uk' ? 'Відео на YouTube' : 'Video on YouTube';
+    return `<p><a href="https://www.youtube.com/watch?v=${videoId}">${text}: https://www.youtube.com/watch?v=${videoId}</a></p>`;
+  });
+  
+  // Обрабатываем другие относительные пути в атрибутах
+  const attributesWithPaths = ['src', 'href', 'poster', 'data-src'];
+  attributesWithPaths.forEach(attr => {
+    const regex = new RegExp(`${attr}="/((?!${siteUrl.replace(/https?:\/\//g, '')})([^"]*))`, 'g');
+    processedContent = processedContent.replace(regex, `${attr}="${siteUrl}$1`);
+  });
+  
+  return processedContent;
+}
+
 function generateRssFeed(posts, language) {
   const lang = language === 'uk' ? 'uk' : 'en';
   const feedUrl = language === 'uk' ? `${siteUrl}ua/feed.xml` : `${siteUrl}feed.xml`;
@@ -772,13 +814,16 @@ function generateRssFeed(posts, language) {
     const postUrl = language === 'uk' ? 
       `${siteUrl}ua/${monthKey}/${postSlug}/` : 
       `${siteUrl}${monthKey}/${postSlug}/`;
+    
+    // Обрабатываем контент для RSS
+    const rssContent = prepareContentForRss(post.content, language);
 
     return `
       <item>
         <title><![CDATA[${post.title.date} ${post.title.time}]]></title>
         <link>${postUrl}</link>
         <guid isPermaLink="true">${postUrl}</guid>
-        <description><![CDATA[${post.content}]]></description>
+        <description><![CDATA[${rssContent}]]></description>
         <pubDate>${new Date(post.date).toUTCString()}</pubDate>
       </item>`;
   }).join('\n');
