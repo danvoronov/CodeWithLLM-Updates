@@ -58,6 +58,4 @@
 
 Instead of paying for individual **API keys** for every AI service, there are cost-effective and flexible alternatives. One option is to use [OpenRouter](https://openrouter.ai/), which acts as a unified API for various models. This can potentially consolidate costs and simplify integration.
 
-You can also find a comprehensive list of AI coding tools in the following awesome-type repository: [awesome-code-ai](https://github.com/sourcegraph/awesome-code-ai).
-
 If you have powerful hardware and prioritize privacy or want more control, you can run large language models (LLMs) locally. Tools like [Ollama](https://ollama.com/) and [LM Studio](https://lmstudio.ai/) make it easier to deploy and manage these models on your own machine. For code autocompletion specifically, consider solutions with local-first option like [TabbyML](https://www.tabbyml.com/).
