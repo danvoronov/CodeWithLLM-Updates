@@ -252,6 +252,247 @@ function createPostPage(post, language) {
   );
 }
 
+function createFilterInput(language) {
+  const lang = language === 'uk' ? 'uk' : 'en';
+  const placeholder = lang === 'uk' ? 'фільтр:' : 'filter:';
+  
+  return `
+    <div class="filter-wrapper">
+      <div class="input-container">
+        <input type="text" id="postsFilter" class="posts-filter" placeholder="${placeholder}" autocomplete="off">
+        <button type="button" id="clearFilter" class="clear-filter" aria-label="Очистить">✕</button>
+      </div>
+      <div id="tagSuggestionsWrapper" class="tags-suggestions">
+        <div id="tagSuggestions" class="tag-chips"></div>
+      </div>
+    </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const filterInput = document.getElementById('postsFilter');
+        const clearFilterBtn = document.getElementById('clearFilter');
+        const posts = document.querySelectorAll('.post-wrapper');
+        const tagSuggestions = document.getElementById('tagSuggestions');
+        const tagSuggestionsWrapper = document.getElementById('tagSuggestionsWrapper');
+        const minChars = 3;
+        
+        // Запоминаем положение скролла перед фильтрацией
+        let lastScrollPosition = 0;
+        let lastHighlightedPosts = [];
+        let originalContents = new Map();
+        
+        // Управление отображением панели тегов
+        filterInput.addEventListener('focus', () => {
+          tagSuggestionsWrapper.classList.add('visible');
+        });
+        
+        // Скрываем панель только если клик был вне фильтра и панели тегов
+        document.addEventListener('click', (e) => {
+          if (!filterInput.contains(e.target) && !tagSuggestionsWrapper.contains(e.target)) {
+            tagSuggestionsWrapper.classList.remove('visible');
+          }
+        });
+        
+        // Обработчик для кнопки очистки
+        clearFilterBtn.addEventListener('click', () => {
+          filterInput.value = '';
+          updateSearch();
+          filterInput.focus();
+          toggleClearButton();
+        });
+        
+        // Функция для отображения/скрытия кнопки очистки
+        function toggleClearButton() {
+          clearFilterBtn.style.display = filterInput.value.length > 0 ? 'block' : 'none';
+        }
+        
+        // Инициализация состояния кнопки очистки
+        toggleClearButton();
+        
+        // Сохраняем оригинальный HTML всех постов
+        posts.forEach(postWrapper => {
+          const post = postWrapper.querySelector('.post');
+          if (post) {
+            originalContents.set(post, post.innerHTML);
+          }
+        });
+        
+        // Собираем все теги со страницы
+        function collectTags() {
+          const tagRegex = /#([a-zA-Zа-яА-ЯёЁіІїЇєЄ0-9]+)/g;
+          const tagCounts = {};
+          
+          posts.forEach(postWrapper => {
+            const postContent = postWrapper.textContent;
+            const matches = postContent.match(tagRegex);
+            
+            if (matches) {
+              matches.forEach(tag => {
+                tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+              });
+            }
+          });
+          
+          // Сортируем по популярности
+          return Object.entries(tagCounts)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 15)
+            .map(([tag]) => tag);
+        }
+        
+        // Создаем чипсы тегов для автодополнения
+        function createTagChips() {
+          const tags = collectTags();
+          tagSuggestions.innerHTML = '';
+          
+          tags.forEach(tag => {
+            const chip = document.createElement('div');
+            chip.className = 'tag-chip';
+            chip.textContent = tag.startsWith('#') ? tag.slice(1) : tag;
+            chip.dataset.tag = tag;
+            
+            chip.addEventListener('click', () => {
+              filterInput.value = tag;
+              filterInput.focus();
+              updateSearch();
+              toggleClearButton();
+              // Не скрываем панель после клика на тег, чтобы можно было выбрать другой тег
+            });
+            
+            tagSuggestions.appendChild(chip);
+          });
+        }
+        
+        // Функция для подсветки найденного текста
+        function highlightText(originalHtml, searchText) {
+          if (!searchText || searchText.length < minChars) return originalHtml;
+          
+          // Разбиваем HTML на части: текст и теги
+          let parts = [];
+          let inTag = false;
+          let currentText = '';
+          
+          for (let i = 0; i < originalHtml.length; i++) {
+            const char = originalHtml[i];
+            
+            if (char === '<') {
+              if (currentText) parts.push({type: 'text', content: currentText});
+              currentText = '<';
+              inTag = true;
+            } else if (char === '>') {
+              currentText += '>';
+              parts.push({type: 'tag', content: currentText});
+              currentText = '';
+              inTag = false;
+            } else {
+              currentText += char;
+            }
+          }
+          
+          if (currentText) parts.push({type: inTag ? 'tag' : 'text', content: currentText});
+          
+          // Подсвечиваем только в текстовых частях
+          for (let i = 0; i < parts.length; i++) {
+            if (parts[i].type === 'text') {
+              const lowerContent = parts[i].content.toLowerCase();
+              const lowerSearch = searchText.toLowerCase();
+              let highlightedContent = '';
+              let lastIndex = 0;
+              
+              while (true) {
+                const foundIndex = lowerContent.indexOf(lowerSearch, lastIndex);
+                if (foundIndex === -1) break;
+                
+                // Добавляем текст до совпадения
+                highlightedContent += parts[i].content.slice(lastIndex, foundIndex);
+                
+                // Добавляем подсвеченное совпадение
+                const matchedText = parts[i].content.slice(foundIndex, foundIndex + searchText.length);
+                highlightedContent += '<span class="highlight-search">' + matchedText + '</span>';
+                
+                lastIndex = foundIndex + searchText.length;
+              }
+              
+              // Добавляем оставшийся текст
+              highlightedContent += parts[i].content.slice(lastIndex);
+              parts[i].content = highlightedContent;
+            }
+          }
+          
+          // Собираем HTML обратно
+          return parts.map(part => part.content).join('');
+        }
+        
+        function updateSearch() {
+          const searchText = filterInput.value.toLowerCase().trim();
+          
+          // Сначала вернем всё к оригинальному состоянию
+          lastHighlightedPosts.forEach(post => {
+            if (originalContents.has(post)) {
+              post.innerHTML = originalContents.get(post);
+            }
+          });
+          lastHighlightedPosts = [];
+          
+          if (searchText.length >= minChars) {
+            // Запоминаем положение
+            lastScrollPosition = window.scrollY;
+            
+            posts.forEach(postWrapper => {
+              const post = postWrapper.querySelector('.post');
+              const postContent = post.textContent.toLowerCase();
+              const isVisible = postContent.includes(searchText);
+              
+              postWrapper.style.display = isVisible ? 'block' : 'none';
+              
+              if (isVisible) {
+                // Подсвечиваем текст
+                if (originalContents.has(post)) {
+                  const originalHTML = originalContents.get(post);
+                  post.innerHTML = highlightText(originalHTML, searchText);
+                  lastHighlightedPosts.push(post);
+                }
+              }
+            });
+            
+            // Прокручиваем к началу, чтобы пользователь видел фильтрованный контент
+            if (window.scrollY > 200) {
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+          } else {
+            posts.forEach(postWrapper => {
+              postWrapper.style.display = 'block';
+            });
+            
+            // Возвращаем пользователя к предыдущей позиции скролла
+            if (lastScrollPosition > 0 && searchText.length === 0) {
+              window.scrollTo({ top: lastScrollPosition, behavior: 'auto' });
+              lastScrollPosition = 0;
+            }
+          }
+        }
+        
+        // Инициализация
+        createTagChips();
+        filterInput.addEventListener('input', () => {
+          updateSearch();
+          toggleClearButton();
+        });
+        
+        // Очистка фильтра при нажатии Escape
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape' && document.activeElement === filterInput) {
+            filterInput.value = '';
+            updateSearch();
+            filterInput.blur();
+            tagSuggestionsWrapper.classList.remove('visible');
+            toggleClearButton();
+          }
+        });
+      });
+    </script>
+  `;
+}
+
 function createMonthArchivePage(posts, month, year, language, monthsData, currentMonth, allPosts) {
   const title = `${getMonthTitle({year: parseInt(year), month: parseInt(month)}, language)}`;
   const monthTags = extractTags(posts);
@@ -276,98 +517,6 @@ function createMonthArchivePage(posts, month, year, language, monthsData, curren
       }).join('\n')}
       ${createArchiveNavigation(monthsData, currentMonth, language)}
     </div>
-    <div class="scroll-tags">
-      <a href="javascript:void(0)" class="up-button" title="${siteConfig.ui[lang].scrollToTop}">${siteConfig.ui[lang].home}</a>
-      ${monthTags.map(([tag, count]) => `<a href="javascript:void(0)" data-tag="${tag}" data-count=" • ${count}">${tag.startsWith('#') ? `<span class="hashtagcolor">#</span>${tag.slice(1)}` : tag}</a>`).join('\n')}
-    </div>
-    <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        const posts = document.querySelectorAll('.post');
-        const tagLinks = document.querySelectorAll('.scroll-tags a:not(.up-button)');
-        const upButton = document.querySelector('.up-button');
-        const tagPositions = new Map();
-        let activePost = null;
-
-        const updateTagHighlight = () => {
-          tagLinks.forEach(link => {
-            link.style.background = '';
-            link.style.color = '';
-          });
-          if (activePost) {
-            const content = activePost.innerHTML;
-            tagLinks.forEach(link => {
-              if (content.includes(link.dataset.tag)) {
-                link.style.background = 'rgba(131, 227, 186, 0.2)';
-                link.style.color = '#333';
-              }
-            });
-          }
-        };
-
-        const observer = new IntersectionObserver(entries => {
-          let bestPost = null, maxRatio = 0;
-          entries.forEach(({ target, intersectionRatio }) => {
-            if (intersectionRatio > maxRatio) {
-              maxRatio = intersectionRatio;
-              bestPost = target;
-            }
-          });
-          // Если видимость поста >= 50% – считаем его активным
-          if (maxRatio >= 0.5) {
-            activePost = bestPost;
-            updateTagHighlight();
-          }
-        }, {
-          threshold: Array.from({ length: 101 }, (_, i) => i / 100)
-        });
-
-        posts.forEach(post => observer.observe(post));
-
-        upButton.addEventListener('click', function(e) {
-          e.preventDefault();
-          window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-          });
-        });
-
-        tagLinks.forEach(link => {
-          link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const tag = this.dataset.tag;
-            const positions = findTagPositions(tag);
-            
-            if (positions.length === 0) return;
-            
-            let currentPos = tagPositions.has(tag) ? tagPositions.get(tag) : -1;
-            currentPos = (currentPos + 1) % positions.length;
-            tagPositions.set(tag, currentPos);
-            
-            const post = positions[currentPos];
-            scrollToPost(post);
-          });
-        });
-
-        function findTagPositions(tag) {
-          const positions = [];
-          posts.forEach(post => {
-            if (post.innerHTML.includes(tag)) {
-              positions.push(post);
-            }
-          });
-          return positions;
-        }
-
-        function scrollToPost(post) {
-          const rect = post.getBoundingClientRect();
-          const absoluteTop = window.pageYOffset + rect.top - 100;
-          window.scrollTo({
-            top: absoluteTop,
-            behavior: 'smooth'
-          });
-        }
-      });
-    </script>
   `, language === 'uk' ? 'ukr' : 'index', allPosts, currentMonth);
 }
 
@@ -489,98 +638,6 @@ function createBlogContent(posts, language) {
         }).join('\n')}
       </div>
     </div>
-    <div class="scroll-tags">
-     <a href="javascript:void(0)" class="up-button" title="${siteConfig.ui[lang].scrollToTop}">${siteConfig.ui[lang].home}</a>
-      ${topTags.map(([tag, count]) => `<a href="javascript:void(0)" data-tag="${tag}" data-count=" • ${count}">${tag.startsWith('#') ? `<span class="hashtagcolor">#</span>${tag.slice(1)}` : tag}</a>`).join('\n')}
-    </div>
-    <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        const posts = document.querySelectorAll('.post');
-        const tagLinks = document.querySelectorAll('.scroll-tags a:not(.up-button)');
-        const upButton = document.querySelector('.up-button');
-        const tagPositions = new Map();
-        let activePost = null;
-
-        const updateTagHighlight = () => {
-          tagLinks.forEach(link => {
-            link.style.background = '';
-            link.style.color = '';
-          });
-          if (activePost) {
-            const content = activePost.innerHTML;
-            tagLinks.forEach(link => {
-              if (content.includes(link.dataset.tag)) {
-                link.style.background = 'rgba(131, 227, 186, 0.2)';
-                link.style.color = '#333';
-              }
-            });
-          }
-        };
-
-        const observer = new IntersectionObserver(entries => {
-          let bestPost = null, maxRatio = 0;
-          entries.forEach(({ target, intersectionRatio }) => {
-            if (intersectionRatio > maxRatio) {
-              maxRatio = intersectionRatio;
-              bestPost = target;
-            }
-          });
-          // Если видимость поста >= 50% – считаем его активным
-          if (maxRatio >= 0.5) {
-            activePost = bestPost;
-            updateTagHighlight();
-          }
-        }, {
-          threshold: Array.from({ length: 101 }, (_, i) => i / 100)
-        });
-
-        posts.forEach(post => observer.observe(post));
-
-        upButton.addEventListener('click', function(e) {
-          e.preventDefault();
-          window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-          });
-        });
-
-        tagLinks.forEach(link => {
-          link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const tag = this.dataset.tag;
-            const positions = findTagPositions(tag);
-            
-            if (positions.length === 0) return;
-            
-            let currentPos = tagPositions.has(tag) ? tagPositions.get(tag) : -1;
-            currentPos = (currentPos + 1) % positions.length;
-            tagPositions.set(tag, currentPos);
-            
-            const post = positions[currentPos];
-            scrollToPost(post);
-          });
-        });
-
-        function findTagPositions(tag) {
-          const positions = [];
-          posts.forEach(post => {
-            if (post.innerHTML.includes(tag)) {
-              positions.push(post);
-            }
-          });
-          return positions;
-        }
-
-        function scrollToPost(post) {
-          const rect = post.getBoundingClientRect();
-          const absoluteTop = window.pageYOffset + rect.top - 100;
-          window.scrollTo({
-            top: absoluteTop,
-            behavior: 'smooth'
-          });
-        }
-      });
-    </script>
   `;
 }
 
@@ -753,6 +810,7 @@ function createPage(title, content, activeMenu, posts = [], currentMonth = '', p
   <body>
     <div class="wrapper">
     ${preGeneratedMenu || generateMenu(activeMenu, posts, currentMonth)}
+      ${(activeMenu === 'index' || activeMenu === 'ukr') ? createFilterInput(activeMenu === 'ukr' ? 'uk' : 'en') : ''}
       ${content}
     </div>
   </body>
