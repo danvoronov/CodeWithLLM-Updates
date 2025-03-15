@@ -708,6 +708,7 @@ body {
     margin: 1rem 1.2rem;
     border-left: 29px solid #333;
     box-sizing: border-box;
+        max-width: 1040px;
   }
 
   .site-description {
