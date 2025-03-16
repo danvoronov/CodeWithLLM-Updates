@@ -692,10 +692,11 @@ body {
     text-decoration: none;
     transition: all 0.2s ease;
     margin-top: 40px;
+    cursor: pointer;
   }
 
   .post-tag:hover {
-    background: rgba(51, 51, 51, 0.1);
+    background: rgba(62, 166, 74, 0.1);
     transform: translateY(-1px);
   }
 
@@ -706,9 +707,10 @@ body {
 
   .site-description-wrapper {
     margin: 1rem 1.2rem;
+    margin-right: 0;
     border-left: 29px solid #333;
     box-sizing: border-box;
-        max-width: 1040px;
+    max-width: 1052px;
   }
 
   .site-description {

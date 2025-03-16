@@ -54,7 +54,7 @@ marked.use({
 
 function mdToHtml(content) {
   // Заменяем теги на красивые спаны перед обработкой markdown
-  content = content.replace(/(?<=\s)#([a-zA-Zа-яА-ЯёЁіІїЇєЄ]+)/g, '<span class="post-tag">#$1</span>');
+  content = content.replace(/(?<=\s)#([a-zA-Zа-яА-ЯёЁіІїЇєЄ]+)/g, '<span class="post-tag" onclick="document.getElementById(\'postsFilter\').value=\'#$1\';document.getElementById(\'postsFilter\').dispatchEvent(new Event(\'input\'))">#$1</span>');
   
   return marked.parse(content.replace(/<!--[\s\S]*?-->/g, ''));
 }

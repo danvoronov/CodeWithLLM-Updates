@@ -254,7 +254,7 @@ function createPostPage(post, language) {
 
 function createFilterInput(language) {
   const lang = language === 'uk' ? 'uk' : 'en';
-  const placeholder = lang === 'uk' ? 'фільтр:' : 'filter:';
+  const placeholder = lang === 'uk' ? 'Фільтр:' : 'Filter:';
   
   return `
     <div class="filter-wrapper">
@@ -755,6 +755,16 @@ function generateMenu(activeMenu, posts = [], currentMonth = '') {
           burger.classList.toggle('open');
           body.classList.toggle('menu-open');
         });
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          const filterInput = document.getElementById('postsFilter');
+          if (filterInput) {
+            filterInput.value = '';
+            filterInput.dispatchEvent(new Event('input'));
+          }
+        }
       });
     </script>`;
 }
