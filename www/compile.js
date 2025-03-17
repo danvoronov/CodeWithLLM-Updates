@@ -116,12 +116,14 @@ function processLanguagePosts(langConfig) {
         if (!ALLOWED_EXTENSIONS.markdown.includes(ext)) return;
         
         const rawContent = fs.readFileSync(path.join(monthPath, file), 'utf8');
-        const content = mdToHtml(removeMetaTags(rawContent));
+        const cleanContent = removeMetaTags(rawContent);
+        const content = mdToHtml(cleanContent);
         const date = getPostDate(file, year, monthNum);
         
         posts.push({
           title: file.match(/^\d{4}-\d{2}-\d{2}-\d{2}-\d{2}/) ? formatPostTitle(file) : file.replace('.md', ''),
           content,
+          rawContent: cleanContent,
           date,
           month: monthNum
         });
@@ -241,10 +243,16 @@ function createCommentsLink(post, language, path) {
 let createPageWithMenu;
 
 function createPostPage(post, language) {
+  // Создаем копию поста с обработанным контентом для одиночной страницы
+  const singlePost = {
+    ...post,
+    content: mdToHtml(removeMetaTags(post.rawContent || ''), true) // Передаем true для isSinglePost
+  };
+
   return createPageWithMenu(
     post.title, 
     `<div class="post" data-title="${post.title.date}" data-time="${post.title.time}">
-      ${post.content}
+      ${singlePost.content}
       ${createCommentsSection(post, language)}
     </div>`, 
     language==='uk'?'ukr':'index', 
@@ -255,6 +263,7 @@ function createPostPage(post, language) {
 function createFilterInput(language) {
   const lang = language === 'uk' ? 'uk' : 'en';
   const placeholder = lang === 'uk' ? 'Фільтр:' : 'Filter:';
+  const githubBtnText = lang === 'uk' ? 'У всіх постах (GitHub)' : 'In all posts (GitHub)';
   
   return `
     <div class="filter-wrapper">
@@ -262,6 +271,12 @@ function createFilterInput(language) {
         <input type="text" id="postsFilter" class="posts-filter" placeholder="${placeholder}" autocomplete="off">
         <button type="button" id="clearFilter" class="clear-filter" aria-label="Очистить">✕</button>
       </div>
+      <button type="button" id="githubSearchBtn" class="github-search-btn" aria-label="Search in GitHub">
+          <svg viewBox="0 0 16 16">
+            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+          </svg>
+          ${githubBtnText}
+      </button>
       <div id="tagSuggestionsWrapper" class="tags-suggestions">
         <div id="tagSuggestions" class="tag-chips"></div>
       </div>
@@ -270,10 +285,78 @@ function createFilterInput(language) {
       document.addEventListener('DOMContentLoaded', () => {
         const filterInput = document.getElementById('postsFilter');
         const clearFilterBtn = document.getElementById('clearFilter');
+        const githubSearchBtn = document.getElementById('githubSearchBtn');
         const posts = document.querySelectorAll('.post-wrapper');
         const tagSuggestions = document.getElementById('tagSuggestions');
         const tagSuggestionsWrapper = document.getElementById('tagSuggestionsWrapper');
         const minChars = 3;
+        
+        // Управление расширением поля фильтра
+        filterInput.addEventListener('focus', () => {
+          filterInput.classList.add('expanded');
+          // Показываем кнопку GitHub поиска при фокусе, если есть текст
+          if (filterInput.value.trim().length > 0) {
+            githubSearchBtn.classList.add('visible');
+          }
+          // Показываем кнопку очистки, если есть текст
+          toggleClearButton();
+        });
+        
+        // Обновленная логика сворачивания поля
+        filterInput.addEventListener('blur', () => {
+          // Сужаем поле только если оно пустое
+          if (filterInput.value.trim() === '') {
+            filterInput.classList.remove('expanded');
+            githubSearchBtn.classList.remove('visible');
+          } else {
+            // Если есть текст, оставляем поле развернутым
+            filterInput.classList.add('expanded');
+          }
+        });
+        
+        // Обработчик для кнопки поиска в GitHub
+        githubSearchBtn.addEventListener('click', () => {
+          const searchText = filterInput.value.trim();
+          if (searchText.length > 0) {
+            const encodedQuery = encodeURIComponent("repo:danvoronov/CodeWithLLM-Updates " + searchText);
+            window.open("https://github.com/search?q=" + encodedQuery + " language%3AMarkdown&type=code", '_blank');
+          }
+        });
+        
+        // Обновляем состояние поля и кнопок при вводе
+        filterInput.addEventListener('input', () => {
+          const hasText = filterInput.value.trim().length > 0;
+          
+          // Управляем видимостью кнопки GitHub и состоянием поля
+          if (hasText) {
+            githubSearchBtn.classList.add('visible');
+            filterInput.classList.add('expanded');
+          } else {
+            githubSearchBtn.classList.remove('visible');
+          }
+          
+          // Обновляем поиск и кнопку очистки
+          updateSearch();
+          toggleClearButton();
+        });
+        
+        // Добавляем обработчик клика по дате в вертикальной полоске
+        document.querySelectorAll('.post').forEach(post => {
+          // Используем делегирование событий для ::after
+          post.addEventListener('click', (e) => {
+            // Проверяем, был ли клик по ::after элементу
+            // Для этого проверяем координаты клика относительно поста
+            const rect = post.getBoundingClientRect();
+            const isClickOnAfter = e.clientX <= rect.left + 30; // 30px - примерная ширина ::after
+            
+            if (isClickOnAfter) {
+              const postUrl = post.getAttribute('data-post-url');
+              if (postUrl) {
+                window.location.href = postUrl;
+              }
+            }
+          });
+        });
         
         // Запоминаем положение скролла перед фильтрацией
         let lastScrollPosition = 0;
@@ -296,13 +379,18 @@ function createFilterInput(language) {
         clearFilterBtn.addEventListener('click', () => {
           filterInput.value = '';
           updateSearch();
-          filterInput.focus();
+          filterInput.focus(); // Сохраняем фокус на поле
           toggleClearButton();
+          githubSearchBtn.classList.remove('visible'); // Скрываем кнопку GitHub
+          
+          // Не сужаем поле, так как оно в фокусе
         });
         
         // Функция для отображения/скрытия кнопки очистки
         function toggleClearButton() {
-          clearFilterBtn.style.display = filterInput.value.length > 0 ? 'block' : 'none';
+          // Всегда показываем кнопку очистки, если в поле есть текст
+          const hasText = filterInput.value.trim().length > 0;
+          clearFilterBtn.style.display = hasText ? 'block' : 'none';
         }
         
         // Инициализация состояния кнопки очистки
@@ -480,12 +568,22 @@ function createFilterInput(language) {
         
         // Очистка фильтра при нажатии Escape
         document.addEventListener('keydown', function(e) {
-          if (e.key === 'Escape' && document.activeElement === filterInput) {
-            filterInput.value = '';
-            updateSearch();
-            filterInput.blur();
-            tagSuggestionsWrapper.classList.remove('visible');
-            toggleClearButton();
+          if (e.key === 'Escape') {
+            // Проверяем, есть ли текст в поле фильтра
+            if (filterInput.value.trim() !== '') {
+              filterInput.classList.remove('expanded');
+              filterInput.value = '';
+              updateSearch();
+              toggleClearButton();
+              githubSearchBtn.classList.remove('visible'); // Скрываем кнопку GitHub
+              tagSuggestionsWrapper.classList.remove('visible');
+              
+              // Если фокус был в поле ввода, убираем его
+              if (document.activeElement === filterInput) {
+                filterInput.blur();
+                // Поле сузится автоматически в обработчике blur, так как оно пустое
+              }
+            }
           }
         });
       });
@@ -508,7 +606,7 @@ function createMonthArchivePage(posts, month, year, language, monthsData, curren
         const fullPath = `${basePath}${monthKey}/${postSlug}/`;
         return `
         <div class="post-wrapper">
-          <div class="post" data-title="${post.title.date}" data-time="${post.title.time}" data-date="${post.date}">
+          <div class="post" data-title="${post.title.date}" data-time="${post.title.time}" data-date="${post.date}" data-post-url="${fullPath}">
             ${post.content}
               ${createCommentsLink(post, language, fullPath)}
             </div>
@@ -624,14 +722,15 @@ function createBlogContent(posts, language) {
           const postSlug = getPostSlug(post);
           const date = new Date(post.date);
           const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-          const path = language === 'uk' ? 
-            `${siteUrl}ua/${monthKey}/${postSlug}/` : 
-            `${siteUrl}${monthKey}/${postSlug}/`;
+          const relativePath = language === 'uk' ? 
+            `/ua/${monthKey}/${postSlug}/` : 
+            `/${monthKey}/${postSlug}/`;
+          const fullPath = `${siteUrl}${relativePath.substring(1)}`;
           return `
           <div class="post-wrapper">
-            <div class="post" data-title="${post.title.date}" data-time="${post.title.time}" data-date="${post.date}">
+            <div class="post" data-title="${post.title.date}" data-time="${post.title.time}" data-date="${post.date}" data-post-url="${fullPath}">
               ${post.content}
-                ${createCommentsLink(post, language, path)}
+                ${createCommentsLink(post, language, relativePath)}
             </div>
           </div>
           `;
@@ -756,16 +855,6 @@ function generateMenu(activeMenu, posts = [], currentMonth = '') {
           body.classList.toggle('menu-open');
         });
       });
-
-      document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-          const filterInput = document.getElementById('postsFilter');
-          if (filterInput) {
-            filterInput.value = '';
-            filterInput.dispatchEvent(new Event('input'));
-          }
-        }
-      });
     </script>`;
 }
 
@@ -820,7 +909,7 @@ function createPage(title, content, activeMenu, posts = [], currentMonth = '', p
   <body>
     <div class="wrapper">
     ${preGeneratedMenu || generateMenu(activeMenu, posts, currentMonth)}
-      ${(activeMenu === 'index' || activeMenu === 'ukr') ? createFilterInput(activeMenu === 'ukr' ? 'uk' : 'en') : ''}
+      ${(activeMenu === 'index' || activeMenu === 'ukr') && posts.length > 1 ? createFilterInput(activeMenu === 'ukr' ? 'uk' : 'en') : ''}
       ${content}
     </div>
   </body>

@@ -175,6 +175,22 @@ body {
     justify-content: center;
   }
 
+  /* Делаем дату кликабельной только на страницах со списком постов */
+  body:has(.filter-wrapper) .post::after {
+    cursor: pointer;
+    color: #A8E6CF;
+    transition: background-color 0.2s ease;
+  }
+
+  body:has(.filter-wrapper) .post::before {
+    transition: background-color 0.2s ease;
+  }
+
+  body:has(.filter-wrapper) .post:hover::after,
+  body:has(.filter-wrapper) .post:hover::before {
+    background-color: #555;
+  }
+
   .post img {
     max-width: 100%;
     height: auto;
@@ -695,6 +711,12 @@ body {
     cursor: pointer;
   }
 
+  /* Когда фильтр отсутствует, теги не должны выглядеть кликабельными */
+  body:not(:has(.filter-wrapper)) .post-tag {
+    cursor: default;
+    pointer-events: none;
+  }
+
   .post-tag:hover {
     background: rgba(62, 166, 74, 0.1);
     transform: translateY(-1px);
@@ -880,17 +902,23 @@ body {
     top: -1px;
     left: 306px;
     z-index: 1000;
-    width: 360px;
+    width: 550px; /* Увеличиваем ширину контейнера */
+    transition: width 0.3s ease;
+    display: flex;
+    align-items: flex-start;
   }
   
   /* Контейнер для поля ввода и кнопки очистки */
   .input-container {
-    width: 90%;
-    max-width: 600px;
+    width: 100%; /* Занимает всю доступную ширину */
+    max-width: 350px; /* Ограничиваем максимальную ширину */
+    position: relative;
+    display: flex;
+    align-items: center;
   }
 
   .posts-filter {
-    width: 100%;
+    width: 100px; /* Начальная ширина */
     padding: 8px 16px;
     padding-right: 26px; /* Уменьшенный отступ справа для кнопки очистки */
     border: 2px solid rgba(255, 255, 255, 0.3);
@@ -900,15 +928,64 @@ body {
     color: #333;
     font-size: 16px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
+    transition: all 0.3s ease, width 0.3s ease;
     line-height: 1.2;
   }
 
-  .posts-filter:focus {
+  .posts-filter:focus, .posts-filter.expanded {
     outline: none;
     border-color: rgba(131, 227, 186, 0.5);
     background: rgba(255, 255, 255, 0.3);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    width: 100%; /* Расширяется на всю ширину контейнера */
+  }
+  
+  /* Кнопка поиска в GitHub */
+  .github-search-btn {
+    display: none; /* Скрыта по умолчанию */
+    padding: 8px 15px;
+    margin-left: 8px;
+    background: #333;
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 0; /* Убираем закругление */
+    cursor: pointer;
+    font-size: 16px;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    opacity: 0;
+    transform: translateX(-10px);
+    flex-shrink: 0; /* Не сжимается */
+    height: 100%; /* Высота как у поля ввода */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    line-height: 1.2; /* Добавляем line-height как у поля ввода */
+    display: flex; /* Всегда flex для выравнивания содержимого */
+    align-items: center; /* Центрируем содержимое по вертикали */
+    justify-content: center; /* Центрируем содержимое по горизонтали */
+  }
+  
+  .github-search-btn.visible {
+    display: flex; /* Используем flex вместо inline-flex */
+    opacity: 1;
+    transform: translateX(0);
+  }
+  
+  .github-search-btn:hover {
+    background: #555;
+    border-color: rgba(131, 227, 186, 0.5);
+  }
+  
+  .github-search-btn:focus {
+    outline: none;
+    border-color: rgba(131, 227, 186, 0.5);
+  }
+  
+  .github-search-btn svg {
+    width: 16px;
+    height: 16px;
+    margin-right: 6px;
+    fill: currentColor;
   }
   
   /* Кнопка очистки фильтра */
@@ -925,7 +1002,7 @@ body {
     padding: 0;
     width: 20px;
     height: 20px;
-    display: flex;
+    display: none; /* Скрыта по умолчанию */
     align-items: center;
     justify-content: center;
     border-radius: 50%;
@@ -946,6 +1023,7 @@ body {
       font-size: 14px;
       padding: 6px 12px;
       padding-right: 25px;
+      width: 120px; /* Меньшая начальная ширина для мобильных */
     }
     
     .filter-wrapper {
@@ -953,12 +1031,36 @@ body {
       left: 81px;
       top: 9px;
       z-index: 1000;
-      width: 340px;
+      width: 400px; /* Увеличиваем ширину для мобильных */
+    }
+    
+    .input-container {
+      max-width: 250px; /* Меньшая максимальная ширина для мобильных */
     }
     
     .clear-filter {
       right: 2px;
       font-size: 12px;
+    }
+    
+    .posts-filter:focus, .posts-filter.expanded {
+      width: 100%; /* Расширяется на всю ширину контейнера */
+    }
+    
+    .github-search-btn {
+      padding: 6px 12px;
+      font-size: 14px;
+      left: 260px; /* Позиция для мобильных */
+      height: 100%; /* Высота как у поля ввода */
+      border-width: 2px;
+      display: flex; /* Всегда flex для выравнивания содержимого */
+      align-items: center; /* Центрируем содержимое по вертикали */
+    }
+    
+    .github-search-btn svg {
+      width: 14px;
+      height: 14px;
+      margin-right: 4px;
     }
   }
 
@@ -973,7 +1075,7 @@ body {
 
   /* Стили для панели тегов-подсказок */
   .tags-suggestions {
-    margin-top: 10px;
+    margin-top: 8px;
     width: 140%;
     max-width: 600px;
     text-align: center;
@@ -983,7 +1085,6 @@ body {
     transition: opacity 0.3s ease, transform 0.3s ease;
     position: absolute;
     z-index: 10;
-    background: rgba(255, 255, 255, 0.95);
     border-radius: 0;
     padding: 12px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
