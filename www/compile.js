@@ -593,8 +593,6 @@ function createFilterInput(language) {
 
 function createMonthArchivePage(posts, month, year, language, monthsData, currentMonth, allPosts) {
   const title = `${getMonthTitle({year: parseInt(year), month: parseInt(month)}, language)}`;
-  const monthTags = extractTags(posts);
-  const lang = language === 'uk' ? 'uk' : 'en';
   const basePath = language === 'uk' ? '/ua/' : '/';
 
   return createPage(title, `
@@ -686,28 +684,8 @@ function getMonthName(month, language) {
   return postsConfig.monthNames[language === 'uk' ? 'uk' : 'en'][monthIndex];
 }
 
-function extractTags(posts) {
-  const tagRegex = /#([a-zA-Zа-яА-ЯёЁіІїЇєЄ]+)/g;
-  const tagMap = new Map();
-  
-  posts.slice(0, postsConfig.recentPostsCount).forEach(post => {
-    const matches = post.content.match(tagRegex);
-    if (matches) {
-      matches.forEach(tag => {
-        const count = tagMap.get(tag) || 0;
-        tagMap.set(tag, count + 1);
-      });
-    }
-  });
-  
-  return Array.from(tagMap.entries())
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 16);
-}
-
 function createBlogContent(posts, language) {
   const recentPosts = posts.slice(0, postsConfig.recentPostsCount);
-  const topTags = extractTags(recentPosts);
   const lang = language === 'uk' ? 'uk' : 'en';
   
   return `

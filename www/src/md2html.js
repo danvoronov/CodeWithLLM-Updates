@@ -53,13 +53,16 @@ marked.use({
 });
 
 function mdToHtml(content, isSinglePost = false) {
+  // Тег может содержать буквы и цифры
+  const tagRegex = /(?<=\s)#([a-zA-Zа-яА-ЯёЁіІїЇєЄ0-9]+)/g;
+
   // Заменяем теги на красивые спаны перед обработкой markdown
   if (isSinglePost) {
     // Для страницы отдельного поста не добавляем обработчик клика
-    content = content.replace(/(?<=\s)#([a-zA-Zа-яА-ЯёЁіІїЇєЄ]+)/g, '<span class="post-tag">#$1</span>');
+    content = content.replace(tagRegex, '<span class="post-tag">#$1</span>');
   } else {
     // Для страниц со списком постов добавляем обработчик клика
-    content = content.replace(/(?<=\s)#([a-zA-Zа-яА-ЯёЁіІїЇєЄ]+)/g, '<span class="post-tag" onclick="document.getElementById(\'postsFilter\').value=\'#$1\';document.getElementById(\'postsFilter\').dispatchEvent(new Event(\'input\'))">#$1</span>');
+    content = content.replace(tagRegex, '<span class="post-tag" onclick="document.getElementById(\'postsFilter\').value=\'#$1\';document.getElementById(\'postsFilter\').dispatchEvent(new Event(\'input\'))">#$1</span>');
   }
   
   return marked.parse(content.replace(/<!--[\s\S]*?-->/g, ''));
