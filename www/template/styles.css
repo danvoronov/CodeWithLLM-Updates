@@ -22,12 +22,14 @@ body {
     top: 20px;
     left: 20px;
     z-index: 1002;
-    background: none;
+    background: rgba(51, 51, 51, 0.95);
     border: none;
     padding: 8px;
     cursor: pointer;
     color: white;
     transition: opacity 0.3s ease;
+    transform: translateZ(0);
+    will-change: transform;
   }
 
   .burger-menu.open svg {
@@ -140,7 +142,6 @@ body {
     word-wrap: break-word;
     word-break: break-word;
     max-width: 100%;
-    backdrop-filter: blur(10px);
     position: relative;
     min-height: 100px;
     font-size: 1.3rem;
@@ -209,38 +210,32 @@ body {
   }
 
   /* Table styles */
-  .post table {
-    border-collapse: collapse;
+  .post table,
+  .static-content table {
     width: 100%;
+    border-collapse: collapse;
     margin: 1rem 0;
+    background: white;
   }
 
   .post th,
-  .post td {
+  .post td,
+  .static-content th,
+  .static-content td {
     padding: 12px;
-    border-bottom: 1px solid #cccccc;
-    border-right: 1px solid #e6e6e6;
-    word-wrap: break-word;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
   }
 
-  .post th:last-child,
-  .post td:last-child {
-    border-right: none;
+  .post th,
+  .static-content th {
+    background: #f5f5f5;
+    font-weight: 600;
   }
 
-  .post tr:last-child td {
-    border-bottom: none;
-  }
-
-  .post td a {
-    white-space: nowrap;
-    display: inline-block;
-  }
-
-  .post table code {
-    background: rgba(51, 51, 51, 0.05);
-    padding: 2px 4px;
-    border-radius: 3px;
+  .post tr:hover,
+  .static-content tr:hover {
+    background: #f9f9f9;
   }
 
   .sidebar {
@@ -250,7 +245,6 @@ body {
     padding: 20px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     height: fit-content;
-    backdrop-filter: blur(10px);
   }
   .nav {
     position: fixed;
@@ -314,9 +308,10 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.2);
     font-size: 0.9em;
     transition: 0.2s ease;
-    background-color: rgba(51, 51, 51, 0.9);
-    backdrop-filter: blur(10px);
+    background-color: rgba(51, 51, 51, 0.95);
     z-index: 1001;
+    transform: translateZ(0);
+    will-change: transform;
   }
   .github-stars:hover {
     color: #EEE65F;
@@ -657,10 +652,11 @@ body {
     font-size: 0.9em;
     color: white;
     text-decoration: none;
-    background: rgba(51, 51, 51, 0.9);
-    backdrop-filter: blur(10px);
+    background: rgba(51, 51, 51, 0.95);
     border-radius: 8px 0 8px 0;
     transition: all 0.2s ease;
+    transform: translateZ(0);
+    will-change: transform;
   }
   .comments-link a::before {
     content: "💬";
@@ -819,7 +815,9 @@ body {
     padding: 12px;
     border-bottom: 1px solid #cccccc;
     border-right: 1px solid #e6e6e6;
-    word-wrap: break-word;
+    white-space: normal;
+    word-break: normal;
+    overflow-wrap: break-word;
   }
 
   .static-content td a {
@@ -902,10 +900,12 @@ body {
     top: -1px;
     left: 306px;
     z-index: 1000;
-    width: 550px; /* Увеличиваем ширину контейнера */
+    width: 550px;
     transition: width 0.3s ease;
     display: flex;
     align-items: flex-start;
+    transform: translateZ(0);
+    will-change: transform;
   }
   
   /* Контейнер для поля ввода и кнопки очистки */
@@ -918,18 +918,20 @@ body {
   }
 
   .posts-filter {
-    width: 100px; /* Начальная ширина */
+    width: 100px;
     padding: 8px 16px;
-    padding-right: 26px; /* Уменьшенный отступ справа для кнопки очистки */
+    padding-right: 26px;
     border: 2px solid rgba(255, 255, 255, 0.3);
     border-radius: 0;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.3);
     color: #333;
     font-size: 16px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease, width 0.3s ease;
     line-height: 1.2;
+    backdrop-filter: blur(4px);
+    transform: translateZ(0);
+    will-change: transform;
   }
 
   .posts-filter:focus, .posts-filter.expanded {
@@ -942,27 +944,28 @@ body {
   
   /* Кнопка поиска в GitHub */
   .github-search-btn {
-    display: none; /* Скрыта по умолчанию */
+    display: none;
     padding: 8px 15px;
     margin-left: 8px;
-    background: #333;
+    background: rgba(51, 51, 51, 0.95);
     color: white;
     border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 0; /* Убираем закругление */
+    border-radius: 0;
     cursor: pointer;
     font-size: 16px;
     white-space: nowrap;
     transition: all 0.2s ease;
     opacity: 0;
     transform: translateX(-10px);
-    flex-shrink: 0; /* Не сжимается */
-    height: 100%; /* Высота как у поля ввода */
+    flex-shrink: 0;
+    height: 100%;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(10px);
-    line-height: 1.2; /* Добавляем line-height как у поля ввода */
-    display: flex; /* Всегда flex для выравнивания содержимого */
-    align-items: center; /* Центрируем содержимое по вертикали */
-    justify-content: center; /* Центрируем содержимое по горизонтали */
+    line-height: 1.2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translateZ(0);
+    will-change: transform;
   }
   
   .github-search-btn.visible {
@@ -1079,7 +1082,7 @@ body {
     width: 140%;
     max-width: 600px;
     text-align: center;
-    display: none; /* Скрываем по умолчанию */
+    display: none;
     opacity: 0;
     transform: translateY(-10px);
     transition: opacity 0.3s ease, transform 0.3s ease;
@@ -1092,7 +1095,7 @@ body {
     top: calc(100% - 10px);
     left: 50%;
     transform: translateX(-50%) translateY(-10px);
-    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.95);
   }
   
   /* Класс для отображения панели */
@@ -1152,5 +1155,39 @@ body {
     .tag-chip {
       padding: 4px 10px;
       font-size: 12px;
+    }
+  }
+
+  /* Стили для мобильных устройств */
+  @media (max-width: 768px) {
+    .post table:has(tr td:nth-child(3)),
+    .static-content table:has(tr td:nth-child(3)) {
+      & td:first-child,
+      & th:first-child {
+        width: 20%;
+      }
+
+      & td:nth-child(2),
+      & th:nth-child(2) {
+        width: 60%;
+      }
+
+      & td:last-child,
+      & th:last-child {
+        width: 20%;
+      }
+    }
+
+    .post table:not(:has(tr td:nth-child(3))),
+    .static-content table:not(:has(tr td:nth-child(3))) {
+      & td:first-child,
+      & th:first-child {
+        width: 35%;
+      }
+
+      & td:last-child,
+      & th:last-child {
+        width: 65%;
+      }
     }
   }
