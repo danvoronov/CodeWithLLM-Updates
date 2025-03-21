@@ -99,6 +99,6 @@ Closed or unmaintained projects: [rubberduck](https://github.com/rubberduck-ai/r
 
 Instead of paying for individual **API keys** for every AI service, there are cost-effective and flexible alternatives. One option is to use [OpenRouter](https://openrouter.ai/), which acts as a unified API for various models. This can potentially consolidate costs and simplify integration.
 
-In addition to OpenRouter's own **top models** in the programming section, you can always check [Chatbot Arena (formerly LMSYS)](https://lmarena.ai/?arena) to see what model is currently performing better with programming tasks or WebDev or Copilot.
+In addition to OpenRouter's own **top models** in the programming section, you can always check [Chatbot Arena (formerly LMSYS)](https://lmarena.ai/?arena) to see what model is currently performing better with programming or WebDev or Copilot tasks.
 
 If you have powerful hardware and prioritize privacy or want more control, you can run large language models (LLMs) locally. Tools like [Ollama](https://ollama.com/) and [LM Studio](https://lmstudio.ai/) make it easier to deploy and manage these models on your own machine. For code autocompletion specifically, consider solutions with local-first option like [TabbyML](https://www.tabbyml.com/).
