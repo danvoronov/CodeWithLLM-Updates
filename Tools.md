@@ -1,9 +1,7 @@
 
 ## Integrated Development Environments
 
- These IDEs offer a superior coding experience compared to traditional IDEs.
-
-| Tool                                                                                                 | Description                                                                                                                                                                                                                                                                     | Links                                                                                                                                                                                                      |
+| Name                                                                                                 | Description                                                                                                                                                                                                                                                                     | Links                                                                                                                                                                                                      |
 | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | ![icon](https://www.google.com/s2/favicons?domain=cursor.com&sz=24) [Cursor](https://www.cursor.sh/) | A next-generation IDE designed for pair-programming with AI. Edit, debug, and understand complex codebases with powerful AI assistance.                                                                                                                                         | [changelog](https://www.cursor.com/changelog)<br>[price](https://www.cursor.com/pricing) ($20)<br>[forum](https://forum.cursor.com/)                                                                       |
 | [Windsurf](https://codeium.com/windsurf)                                                             | Windsurf, by Codeium, is an AI-powered code completion tool. It is designed to suggest entire functions and blocks of code based on context.                                                                                                                                    | [changelog](https://codeium.com/changelog)<br>[price](https://codeium.com/pricing) ($15+)<br>[discord](https://discord.com/invite/3XFf78nAx5)                                                              |
@@ -20,7 +18,6 @@
 Closed or unmaintained projects: [aide](https://github.com/codestoryai/aide) (Feb 25, 2025).
 
 ## AI-Coding Extensions for IDEs
-
 
 | Tool                                                                                                                      | Description                                                                                                                                                                                                                                                 |
 | ------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -94,6 +91,6 @@ Closed or unmaintained projects: [rubberduck](https://github.com/rubberduck-ai/r
 
 Instead of paying for individual **API keys** for every AI service, there are cost-effective and flexible alternatives. One option is to use [OpenRouter](https://openrouter.ai/), which acts as a unified API for various models. This can potentially consolidate costs and simplify integration.
 
-In addition to OpenReview's own TOP models in the programming section, you can always check [Chatbot Arena (formerly LMSYS)](https://lmarena.ai/?arena) to see what model is currently performing better with programming tasks or WebDev or Copilot.
+In addition to OpenRouter's own **top models** in the programming section, you can always check [Chatbot Arena (formerly LMSYS)](https://lmarena.ai/?arena) to see what model is currently performing better with programming tasks or WebDev or Copilot.
 
 If you have powerful hardware and prioritize privacy or want more control, you can run large language models (LLMs) locally. Tools like [Ollama](https://ollama.com/) and [LM Studio](https://lmstudio.ai/) make it easier to deploy and manage these models on your own machine. For code autocompletion specifically, consider solutions with local-first option like [TabbyML](https://www.tabbyml.com/).
