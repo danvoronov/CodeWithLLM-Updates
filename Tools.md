@@ -71,6 +71,7 @@ Closed or unmaintained projects: [rubberduck](https://github.com/rubberduck-ai/r
 | ![icon](https://www.google.com/s2/favicons?domain=blackbox.ai&sz=24) [Blackbox App Builder](https://www.blackbox.ai/builder) | Turn your designs into a website, all in your browser - import Figma, clone any website, or start from an image—your ideas, brought to life in minutes.                                                                          |
 | [Pythagora](https://www.pythagora.ai/)                                                                                       | Build. Debug. Deploy. All in one tool. Prompt, run, edit and deploy full-stack web apps.                                                                                                                                         |
 | [Сerebras coder](https://cerebrascoder.com/)                                                                                 | Dream it. Code it.  Instantly. Turn your ideas into fully functional apps in less than a second                                                                                                                                  |
+| [Groq Appgen](https://appgen.groqlabs.com/)                                                                                  | An interactive web application that generates and modifies web applications using Groq's LLM API. You can [run it localy](https://github.com/groq/groq-appgen).                                                                  |
 
 ---
 ## AI-Enhanced Development Tools
