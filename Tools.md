@@ -1,4 +1,4 @@
-
+You can see which tools are currently trending [in this section of Product Hunt](https://www.producthunt.com/categories/ai-coding?order=trending).
 ## Integrated Development Environments
 
 | Name                                                                                                 | Description                                                                                                                                                                                                                                                                     | Links                                                                                                                                                                                                      |
