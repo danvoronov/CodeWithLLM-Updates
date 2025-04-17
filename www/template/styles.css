@@ -218,6 +218,11 @@ body {
     background: white;
   }
 
+  .post table tr:nth-child(even),
+  .static-content table tr:nth-child(even) {
+    background-color: #dedede; 
+  }
+
   .post th,
   .post td,
   .static-content th,
@@ -804,6 +809,10 @@ body {
     overflow: hidden;
     box-shadow: 0 2px 4px rgba(0,0,0,0.08);
   }
+
+  .static-content table tr:nth-child(even) {
+    background-color: #dedede; 
+  }  
 
   .static-content th {
     background: rgba(51, 51, 51, 0.05);
