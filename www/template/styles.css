@@ -220,7 +220,7 @@ body {
 
   .post table tr:nth-child(even),
   .static-content table tr:nth-child(even) {
-    background-color: #dedede; 
+    background-color: #f0f0f0; 
   }
 
   .post th,
@@ -811,7 +811,7 @@ body {
   }
 
   .static-content table tr:nth-child(even) {
-    background-color: #dedede; 
+    background-color: #f0f0f0; 
   }  
 
   .static-content th {
