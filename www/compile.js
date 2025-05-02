@@ -52,23 +52,24 @@ function removeMetaTags(content) {
 }
 
 function getPostDate(filename, year = new Date().getFullYear(), month = 1) {
-
-  const match = filename.match(/(\d{4})-(\d{2})-(\d{2})-(\d{2})-(\d{2})(?:-(\d{2}))?.md/);
+  // Берём только первую часть до пробела или до .md
+  const base = filename.split(' ')[0];
+  const match = base.match(/(\d{4})-(\d{2})-(\d{2})-(\d{2})-(\d{2})(?:-(\d{2}))?/);
   if (match) {
     const [_, fileYear, fileMonth, day, hour, minute, second = '00'] = match;
     return `${fileYear}-${fileMonth}-${day}T${hour}:${minute}:${second}`;
   }
-  
+
   const day = parseInt(filename.split('.')[0]);
   if (isNaN(day) || day < 1 || day > 31) {
     return new Date().toISOString().split('.')[0];
   }
-  
+
   const date = new Date(Date.UTC(year, month - 1, day));
   if (isNaN(date.getTime())) {
     return new Date().toISOString().split('.')[0];
   }
-  
+
   return date.toISOString().split('.')[0];
 }
 
