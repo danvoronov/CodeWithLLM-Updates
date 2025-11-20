@@ -1,5 +1,6 @@
 .obsidian
 .smtcmp_chat_histories
+.smtcmp_json_db
 .smtcmp_vector_db.tar.gz
 pnpm-lock.yaml
 templates/youtube.md
