@@ -1,8 +1,29 @@
+const fs = require('fs');
+const path = require('path');
+
 const siteUrl = 'https://aicode.danvoronov.com/';
 
+function discoverPostsSource(prefix) {
+    const repoRoot = path.resolve(__dirname, '..');
+    const entries = fs.readdirSync(repoRoot, { withFileTypes: true });
+    const re = new RegExp(`^${prefix}_(\\d{4})$`);
+
+    return entries
+        .filter(d => d.isDirectory())
+        .map(d => d.name)
+        .map(name => {
+            const m = name.match(re);
+            if (!m) return null;
+            const year = Number(m[1]);
+            return { year, path: name };
+        })
+        .filter(Boolean)
+        .sort((a, b) => a.year - b.year);
+}
+
 const posts_source = {
-    eng: [{year: 2024, path: 'eng_2024'}, {year: 2025, path: 'eng_2025'}],
-    ukr: [{year: 2024, path: 'ukr_2024'}, {year: 2025, path: 'ukr_2025'}]   
+    eng: discoverPostsSource('eng'),
+    ukr: discoverPostsSource('ukr')
 };
 
 const ALLOWED_EXTENSIONS = {
