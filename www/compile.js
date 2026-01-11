@@ -595,13 +595,14 @@ function createFilterInput(language) {
 function createMonthArchivePage(posts, month, year, language, monthsData, currentMonth, allPosts) {
   const title = `${getMonthTitle({year: parseInt(year), month: parseInt(month)}, language)}`;
   const basePath = language === 'uk' ? '/ua/' : '/';
+  const monthKey = currentMonth || `${year}-${String(month).padStart(2, '0')}`;
+  const postsForMonth = [...posts].sort((a, b) => new Date(a.date) - new Date(b.date));
 
   return createPage(title, `
     <div class="container" style="grid-template-columns: 1fr">
       ${createArchiveNavigation(monthsData, currentMonth, language)}
-      ${posts.map(post => {
+      ${postsForMonth.map(post => {
         const postSlug = getPostSlug(post);
-        const monthKey = currentMonth;
         const fullPath = `${basePath}${monthKey}/${postSlug}/`;
         return `
         <div class="post-wrapper">
