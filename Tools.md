@@ -31,10 +31,11 @@ You can see which tools are currently trending [in this section of Product Hunt]
 
 ## Agents Control
 
-| Tool                                                             | Description                                                                                                                                                            |
-| ---------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [Codex app](https://openai.com/index/introducing-the-codex-app/) | Codex app—a powerful new interface designed to effortlessly manage multiple agents at once, run work in parallel, and collaborate with agents over long-running tasks. |
-| [Zenflow](https://zencoder.ai/zenflow)                           | The platform that coordinates AI agents to build reliable software. Spec-driven workflows, built-in verification, and multi-agent execution that actually works.       |
+| Tool                                                             | Description                                                                                                                                                               |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Codex app](https://openai.com/index/introducing-the-codex-app/) | Codex app—a powerful new interface designed to effortlessly manage multiple agents at once, run work in parallel, and collaborate with agents over long-running tasks.    |
+| [JetBrains Air](https://air.dev/)                                | JetBrains Air is the Agentic Development Environment where Codex, Claude Agent, Gemini CLI, and Junie execute independent task loops without interfering with each other. |
+| [Zenflow](https://zencoder.ai/zenflow)                           | The platform that coordinates AI agents to build reliable software. Spec-driven workflows, built-in verification, and multi-agent execution that actually works.          |
 
 
 ## Integrated Development Environments
