@@ -583,6 +583,51 @@ body {
     font-weight: 500;
   }
 
+  .menu-archive-summary {
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    outline: none;
+    list-style: none;
+    margin-bottom: 0;
+  }
+
+  .menu-archive-summary::-webkit-details-marker,
+  .menu-archive-summary::marker {
+    display: none;
+  }
+
+  .menu-archive-summary h4 {
+    margin: 0;
+    transition: color 0.2s ease;
+  }
+
+  .menu-archive-summary:hover h4 {
+    color: #ffffff;
+  }
+
+  .menu-archive-summary .toggle-icon {
+    font-size: 1.1em;
+    color: rgba(255, 255, 255, 0.7);
+    transition: transform 0.2s ease, color 0.2s ease;
+    display: inline-block;
+    line-height: 1;
+  }
+
+  .menu-archive-summary:hover .toggle-icon {
+    color: #ffffff;
+  }
+
+  details.menu-archive-year[open] > .menu-archive-summary {
+    margin-bottom: 8px;
+  }
+
+  details.menu-archive-year[open] > .menu-archive-summary .toggle-icon {
+    transform: rotate(90deg);
+  }
+
   .menu-archive-months {
     display: flex;
     flex-wrap: wrap;

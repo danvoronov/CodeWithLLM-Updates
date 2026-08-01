@@ -1,3 +1,4 @@
+node_modules
 ai_research/
 .obsidian
 .smtcmp_chat_histories
@@ -5,4 +6,6 @@ ai_research/
 .smtcmp_vector_db.tar.gz
 pnpm-lock.yaml
 templates/youtube.md
+www/public/
 desktop.ini
+.cursorignore

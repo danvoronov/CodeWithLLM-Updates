@@ -727,9 +727,10 @@ function generateArchiveMenu(posts, language, currentMonth = '') {
 
   return `
     <div class="menu-archive">
-      ${years.map(year => `
-        <div class="menu-archive-year">
-          <h4>${year}</h4>
+      ${years.map((year, index) => {
+        const isCollapsible = year === '2024' || year === '2025' || index > 0;
+        const isCurrentMonthInYear = currentMonth.startsWith(`${year}-`);
+        const monthsHtml = `
           <div class="menu-archive-months">
             ${Object.keys(groupedByYear[year])
               .sort().reverse()
@@ -745,9 +746,28 @@ function generateArchiveMenu(posts, language, currentMonth = '') {
                 `;
               }).join('')}
           </div>
+        `;
 
-        </div>
-      `).join('\n')}
+        if (isCollapsible) {
+          const isOpen = isCurrentMonthInYear ? ' open' : '';
+          return `
+            <details class="menu-archive-year"${isOpen}>
+              <summary class="menu-archive-summary">
+                <h4>${year}</h4>
+                <span class="toggle-icon">▸</span>
+              </summary>
+              ${monthsHtml}
+            </details>
+          `;
+        } else {
+          return `
+            <div class="menu-archive-year">
+              <h4>${year}</h4>
+              ${monthsHtml}
+            </div>
+          `;
+        }
+      }).join('\n')}
     </div>
   `;
 }
